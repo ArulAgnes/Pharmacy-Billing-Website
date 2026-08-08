@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pharmacy Billing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="rx-styles.css" />
+  <style>
+    /* ── Top Nav Bar (replaces sidebar) ──────────────── */
+    body { display: block; }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 52px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
+
+    .top-nav-left {
+      display: flex;
+      gap: 8px;
+    }
+
+    .top-nav-right {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tnav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 16px;
+      border-radius: var(--r-sm);
+      font-size: .8rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: background .15s, color .15s;
+      letter-spacing: .02em;
+    }
+
+    .tnav-btn-new {
+      background: var(--teal);
+      color: #fff;
+    }
+    .tnav-btn-new:hover { background: #0c9490; }
+    .tnav-btn-new.active { background: var(--teal); color: #fff; }
+
+    .tnav-btn-list {
+      background: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.85);
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .tnav-btn-list:hover { background: rgba(255,255,255,.18); color: #fff; }
+
+    /* ── No sidebar, full width main ─────────────────── */
+    .main-wrap { margin-left: 0; }
+
+    /* ── panel-head: icon LEFT, text right fix ─────── */
+    /* Icon + text together on left */
+    .panel-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      justify-content: flex-start;
+    }
+    /* Override prod-head to: icon+text LEFT, add-row btn RIGHT */
+    .prod-head {
+      justify-content: space-between;
+      flex-direction: row;
+    }
+    .prod-head-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* ── Additional Charges panel: buttons inside ──── */
+    .charges-panel-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .charges-actions {
+      display: flex;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    /* Dark red dustbin button */
+    .del-btn {
+      background: #7f1d1d !important;
+      color: #fff !important;
+      border: none;
+      cursor: pointer;
+      padding: 5px 7px;
+      border-radius: 6px;
+      transition: background .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .del-btn:hover { background: #991b1b !important; }
+
+    /* Action bar hidden (buttons moved into charges panel) */
+    .action-bar { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━ TOP NAV ━━━━━━━━━━━━━━━━━━━━━━ -->
+<nav class="top-nav">
+  <div class="top-nav-left">
+    <button class="tnav-btn tnav-btn-new active">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+      </svg>
+      New Sale
+    </button>
+  </div>
+  <div class="top-nav-right">
+    <a href="sales_list.php" class="tnav-btn tnav-btn-list">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+             M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+      </svg>
+      Sales List
+    </a>
+  </div>
+</nav>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━ MAIN ━━━━━━━━━━━━━━━━━━━━━━ -->
+<div class="main-wrap">
+  <main class="content">
+
+    <!-- ── Row 1: Patient | Doctor | Invoice ── -->
+    <div class="three-col">
+
+      <!-- Patient -->
+      <div class="panel">
+        <div class="panel-head patient-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+          Patient Details
+        </div>
+        <div class="panel-body">
+          <div class="fld">
+            <label>Patient Name <span class="req">*</span></label>
+            <div class="inp-wrap">
+              <input id="patientName" type="text" placeholder="Full name" autocomplete="off" />
+              <button class="inp-icon-btn" title="Search patient">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="fld">
+            <label>Phone</label>
+            <input id="patientPhone" type="tel" placeholder="Mobile number" />
+          </div>
+          <div class="fld">
+            <label>Address</label>
+            <input id="patientAddress" type="text" placeholder="Street / area" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor -->
+      <div class="panel">
+        <div class="panel-head doctor-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804
+                 M15 10a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Doctor Details
+        </div>
+        <div class="panel-body">
+          <div class="fld">
+            <label>Doctor Name</label>
+            <div class="ac-wrap" id="doctorWrap">
+              <input id="doctorName" type="text" placeholder="Search or type name" autocomplete="off" />
+              <div class="ac-drop hidden" id="doctorDropdown"></div>
+            </div>
+          </div>
+          <label class="reminder-toggle">
+            <input type="checkbox" id="reminderChk" />
+            <span class="reminder-track"></span>
+            <span class="reminder-txt">Remainder?</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Invoice -->
+      <div class="panel">
+        <div class="panel-head invoice-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0
+                 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Invoice Info
+        </div>
+        <div class="panel-body">
+          <div class="fld">
+            <label>Invoice No</label>
+            <input id="invoiceNo" type="text" readonly value="SAL-20260609-001" class="readonly-inp" />
+          </div>
+          <div class="fld">
+            <label>Invoice Date <span class="req">*</span></label>
+            <input id="invoiceDate" type="date" />
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /three-col -->
+
+    <!-- ── Product Table ── -->
+    <div class="panel">
+      <div class="panel-head prod-head">
+        <div class="prod-head-left">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184
+                 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          Product Details
+        </div>
+        <button class="add-row-btn" onclick="addRow()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          Add Row
+        </button>
+      </div>
+      <div class="table-scroll">
+        <table class="prod-table" id="productTable">
+          <thead>
+            <tr>
+              <th class="col-prod">Product</th>
+              <th class="col-salt">SALT</th>
+              <th class="col-qty">Qty</th>
+              <th class="col-batch">Batch</th>
+              <th class="col-exp">Exp</th>
+              <th class="col-rate">Rate</th>
+              <th class="col-gst">GST%</th>
+              <th class="col-mrp">MRP</th>
+              <th class="col-disc">Disc%</th>
+              <th class="col-total">Total</th>
+              <th class="col-del"></th>
+            </tr>
+          </thead>
+          <tbody id="productBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Charges + Summary ── -->
+    <div class="two-col">
+
+      <!-- Additional Charges — with action buttons inside -->
+      <div class="panel">
+        <div class="panel-head charges-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3
+                 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0
+                 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Additional Charges
+        </div>
+        <div class="charges-panel-body">
+          <div class="charges-inline">
+            <div class="fld">
+              <label>Lab</label>
+              <input id="labCharge" type="number" value="0" min="0" step="0.01" oninput="calcGrandTotal()" />
+            </div>
+            <div class="fld">
+              <label>Doctor Fee</label>
+              <input id="doctorCharge" type="number" value="0" min="0" step="0.01" oninput="calcGrandTotal()" />
+            </div>
+            <div class="fld">
+              <label>Injection</label>
+              <input id="injectionCharge" type="number" value="0" min="0" step="0.01" oninput="calcGrandTotal()" />
+            </div>
+            <div class="fld">
+              <label>Nursing</label>
+              <input id="nursingCharge" type="number" value="0" min="0" step="0.01" oninput="calcGrandTotal()" />
+            </div>
+          </div>
+          <!-- Action buttons moved here, inside Additional Charges panel -->
+          <div class="charges-actions">
+            <button class="rxbtn rxbtn-save" onclick="saveSale('saved')">
+              <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 17H17.01M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4z"/>
+              </svg>
+              Save &amp; Print
+            </button>
+            <button class="rxbtn rxbtn-submit" onclick="saveSale('submitted')">
+              <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              Submit Sale
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bill Summary -->
+      <div class="panel">
+        <div class="panel-head summary-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01
+                 M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          Summary
+        </div>
+        <div class="panel-body">
+          <div class="sum-list">
+            <div class="sum-row">
+              <span class="sum-lbl">Total Discount</span>
+              <span id="sumDiscount" class="sum-val discount-val">0.00</span>
+            </div>
+            <div class="sum-row">
+              <span class="sum-lbl">Product Subtotal</span>
+              <span id="sumSubtotal" class="sum-val">0.00</span>
+            </div>
+            <div class="sum-row">
+              <span class="sum-lbl">Additional Charges</span>
+              <span id="sumAdditional" class="sum-val">0.00</span>
+            </div>
+            <div class="sum-row">
+              <span class="sum-lbl">Rounding Off</span>
+              <span id="sumRounding" class="sum-val">0</span>
+            </div>
+            <div class="sum-divider"></div>
+            <div class="sum-grand">
+              <span>Grand Total</span>
+              <span id="sumGrand">₹ 0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /two-col -->
+
+    <!-- action-bar hidden via CSS (buttons moved into charges panel) -->
+    <div class="action-bar"></div>
+
+  </main>
+</div><!-- /main-wrap -->
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━ NOTIFICATION STACK ━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="notifStack"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let rowCount = 0;
+const DOCTORS = ['Dr. Rajesh Kumar','Dr. Priya Sharma','Dr. Arun Mehta','Dr. Sunita Patel','Dr. Vikram Singh','Dr. Deepa Nair'];
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  setInvoiceDate();
+  loadInvoiceNo();
+  addRow(); addRow(); addRow();
+  calcGrandTotal();
+  initDoctorAC();
+  loadDoctorsFromDB();
+});
+
+function setInvoiceDate() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('invoiceDate').value = today;
+}
+
+async function loadInvoiceNo() {
+  try {
+    const r = await fetch('api.php?action=get_invoice_no');
+    const d = await r.json();
+    if (d.success) { setInvoiceDisplay(d.invoice_no); }
+  } catch(_) {
+    const t = new Date();
+    const ds = t.getFullYear() + String(t.getMonth()+1).padStart(2,'0') + String(t.getDate()).padStart(2,'0');
+    setInvoiceDisplay('SAL-' + ds + '-777');
+  }
+}
+
+function setInvoiceDisplay(no) {
+  document.getElementById('invoiceNo').value = no;
+}
+
+// ═══════════════════════════════════════════════════
+//  ROWS
+// ═══════════════════════════════════════════════════
+function addRow() {
+  rowCount++;
+  const id = rowCount;
+  const tr = document.createElement('tr');
+  tr.id = 'row-' + id;
+  tr.innerHTML = `
+    <td class="td-prod">
+      <div class="ac-wrap" id="acWrap${id}">
+        <input type="text" id="prodName${id}" placeholder="Search product…" autocomplete="off"
+               oninput="searchProduct(${id})" />
+        <div class="ac-drop hidden" id="acDrop${id}"></div>
+      </div>
+    </td>
+    <td class="td-center">
+      <label class="salt-chk">
+        <input type="checkbox" id="saltChk${id}" onchange="toggleSaltSearch(${id})" />
+        <span>S</span>
+      </label>
+    </td>
+    <td><input type="number" id="qty${id}" value="1" min="1" oninput="calcRow(${id})" class="tbl-inp narrow" /></td>
+    <td><input type="text" id="batch${id}" placeholder="—" readonly class="tbl-inp readonly-inp mid" /></td>
+    <td><input type="text" id="expDate${id}" placeholder="MM/YY" readonly class="tbl-inp readonly-inp narrow" /></td>
+    <td><input type="number" id="rate${id}" value="0.00" min="0" step="0.01" oninput="calcRow(${id})" class="tbl-inp mid" /></td>
+    <td><input type="number" id="gst${id}" value="0.00" min="0" step="0.01" oninput="calcRow(${id})" class="tbl-inp narrow" /></td>
+    <td><input type="number" id="mrp${id}" value="0.00" readonly class="tbl-inp readonly-inp mid" /></td>
+    <td><input type="number" id="disc${id}" value="0.00" min="0" max="100" step="0.01" oninput="calcRow(${id})" class="tbl-inp narrow" /></td>
+    <td class="td-total"><span id="total${id}">0.00</span></td>
+    <td class="td-del">
+      <button class="del-btn" onclick="removeRow(${id})" title="Delete row">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0
+               01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1
+               1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </button>
+    </td>
+  `;
+  document.getElementById('productBody').appendChild(tr);
+
+  document.addEventListener('click', e => {
+    document.querySelectorAll('.ac-wrap').forEach(w => {
+      if (!w.contains(e.target)) {
+        const d = w.querySelector('.ac-drop');
+        if (d) d.classList.add('hidden');
+      }
+    });
+  });
+}
+
+function removeRow(id) {
+  const r = document.getElementById('row-' + id);
+  if (r) r.remove();
+  calcGrandTotal();
+}
+
+// ═══════════════════════════════════════════════════
+//  PRODUCT AUTOCOMPLETE
+// ═══════════════════════════════════════════════════
+let _timers = {};
+
+function toggleSaltSearch(id) {
+  const inp = document.getElementById('prodName' + id);
+  if (inp.value.trim()) searchProduct(id);
+}
+
+async function searchProduct(id) {
+  clearTimeout(_timers[id]);
+  _timers[id] = setTimeout(async () => {
+    const q = document.getElementById('prodName' + id).value.trim();
+    const salt = document.getElementById('saltChk' + id).checked ? '1' : '0';
+    const drop = document.getElementById('acDrop' + id);
+    if (q.length < 2) { drop.classList.add('hidden'); return; }
+    try {
+      const r = await fetch(`api.php?action=search_product&q=${encodeURIComponent(q)}&salt=${salt}`);
+      renderDrop(id, await r.json());
+    } catch(_) {
+      renderDrop(id, getSampleProducts().filter(p =>
+        p.name.toLowerCase().includes(q.toLowerCase()) ||
+        p.salt.toLowerCase().includes(q.toLowerCase())
+      ).slice(0, 8));
+    }
+  }, 200);
+}
+
+function renderDrop(id, products) {
+  const drop = document.getElementById('acDrop' + id);
+  if (!products.length) { drop.classList.add('hidden'); return; }
+  drop.innerHTML = '';
+  products.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'ac-item';
+    d.innerHTML = `
+      <span class="ac-name">${p.name}</span>
+      <span class="ac-salt">${p.salt || 'N/A'}</span>
+      <span class="ac-meta">Batch: ${p.batch_no} · Exp: ${p.expiry_date} · ₹${p.rate} · Stock: ${p.stock ?? '—'}</span>`;
+    d.addEventListener('click', () => fillRow(id, p));
+    drop.appendChild(d);
+  });
+  drop.classList.remove('hidden');
+}
+
+function fillRow(id, p) {
+  document.getElementById('prodName' + id).value = p.name;
+  document.getElementById('batch' + id).value = p.batch_no;
+  document.getElementById('expDate' + id).value = p.expiry_date;
+  document.getElementById('rate' + id).value = parseFloat(p.rate).toFixed(2);
+  document.getElementById('gst' + id).value = parseFloat(p.gst_percent).toFixed(2);
+  document.getElementById('mrp' + id).value = parseFloat(p.mrp).toFixed(2);
+  document.getElementById('disc' + id).value = '0.00';
+  document.getElementById('acDrop' + id).classList.add('hidden');
+  calcRow(id);
+}
+
+// ═══════════════════════════════════════════════════
+//  CALCULATIONS
+// ═══════════════════════════════════════════════════
+function calcRow(id) {
+  const qty  = parseFloat(document.getElementById('qty'  + id).value) || 0;
+  const rate = parseFloat(document.getElementById('rate' + id).value) || 0;
+  const gst  = parseFloat(document.getElementById('gst'  + id).value) || 0;
+  const disc = parseFloat(document.getElementById('disc' + id).value) || 0;
+
+  const mrp = rate + (rate * gst / 100);
+  document.getElementById('mrp' + id).value = mrp.toFixed(2);
+
+  const gross = mrp * qty;
+  const total = gross - (gross * disc / 100);
+  document.getElementById('total' + id).textContent = total.toFixed(2);
+  calcGrandTotal();
+}
+
+function calcGrandTotal() {
+  let subtotal = 0, totalDisc = 0;
+
+  document.querySelectorAll('#productBody tr').forEach(row => {
+    const m = row.id.match(/row-(\d+)/);
+    if (!m) return;
+    const rid = m[1];
+    const qty  = parseFloat(document.getElementById('qty'  + rid)?.value) || 0;
+    const rate = parseFloat(document.getElementById('rate' + rid)?.value) || 0;
+    const gst  = parseFloat(document.getElementById('gst'  + rid)?.value) || 0;
+    const disc = parseFloat(document.getElementById('disc' + rid)?.value) || 0;
+    const mrp  = rate + (rate * gst / 100);
+    const gross= mrp * qty;
+    const rowD = gross * disc / 100;
+    subtotal  += (gross - rowD);
+    totalDisc += rowD;
+  });
+
+  const lab = parseFloat(document.getElementById('labCharge').value) || 0;
+  const doc = parseFloat(document.getElementById('doctorCharge').value) || 0;
+  const inj = parseFloat(document.getElementById('injectionCharge').value) || 0;
+  const nur = parseFloat(document.getElementById('nursingCharge').value) || 0;
+  const addl = lab + doc + inj + nur;
+
+  const pre  = subtotal + addl;
+  const rounded = Math.round(pre);
+  const rounding = (rounded - pre).toFixed(2);
+
+  document.getElementById('sumDiscount').textContent    = totalDisc.toFixed(2);
+  document.getElementById('sumSubtotal').textContent    = subtotal.toFixed(2);
+  document.getElementById('sumAdditional').textContent  = addl.toFixed(2);
+  document.getElementById('sumRounding').textContent    = rounding;
+  document.getElementById('sumGrand').textContent       = '₹ ' + rounded.toFixed(2);
+}
+
+// ═══════════════════════════════════════════════════
+//  DOCTOR AUTOCOMPLETE
+// ═══════════════════════════════════════════════════
+let doctorList = [...DOCTORS];
+
+async function loadDoctorsFromDB() {
+  try {
+    const r = await fetch('api.php?action=get_doctors');
+    const data = await r.json();
+    if (Array.isArray(data) && data.length) {
+      doctorList = data.map(d => d.name);
+    }
+  } catch(_) {}
+}
+
+function initDoctorAC() {
+  const inp  = document.getElementById('doctorName');
+  const drop = document.getElementById('doctorDropdown');
+  inp.addEventListener('input', () => {
+    const q = inp.value.toLowerCase();
+    const matches = doctorList.filter(d => d.toLowerCase().includes(q));
+    if (!matches.length || !q) { drop.classList.add('hidden'); return; }
+    drop.innerHTML = matches.map(d =>
+      `<div class="ac-item" onclick="pickDoctor('${d}')">
+         <span class="ac-name">${d}</span>
+       </div>`).join('');
+    drop.classList.remove('hidden');
+  });
+  document.addEventListener('click', e => {
+    if (!document.getElementById('doctorWrap').contains(e.target))
+      drop.classList.add('hidden');
+  });
+}
+
+function pickDoctor(name) {
+  document.getElementById('doctorName').value = name;
+  document.getElementById('doctorDropdown').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════════════════
+//  SAVE SALE
+// ═══════════════════════════════════════════════════
+async function saveSale(status) {
+  const patientName = document.getElementById('patientName').value.trim();
+  if (!patientName) {
+    pushNotif('Patient name is required before saving.', 'warn');
+    return;
+  }
+
+  const items = [];
+  document.querySelectorAll('#productBody tr').forEach(row => {
+    const m = row.id.match(/row-(\d+)/);
+    if (!m) return;
+    const rid = m[1];
+    const pname = document.getElementById('prodName' + rid)?.value.trim();
+    if (!pname) return;
+    items.push({
+      product_name:  pname,
+      salt:          '',
+      batch_no:      document.getElementById('batch'   + rid)?.value || '',
+      expiry_date:   document.getElementById('expDate' + rid)?.value || '',
+      qty:           parseInt(document.getElementById('qty'  + rid)?.value) || 1,
+      rate:          parseFloat(document.getElementById('rate' + rid)?.value) || 0,
+      gst_percent:   parseFloat(document.getElementById('gst'  + rid)?.value) || 0,
+      mrp:           parseFloat(document.getElementById('mrp'  + rid)?.value) || 0,
+      disc_percent:  parseFloat(document.getElementById('disc' + rid)?.value) || 0,
+      total:         parseFloat(document.getElementById('total'+ rid)?.textContent) || 0,
+    });
+  });
+
+  if (!items.length) {
+    pushNotif('Add at least one product to continue.', 'warn');
+    return;
+  }
+
+  const payload = {
+    patient_name:    patientName,
+    patient_phone:   document.getElementById('patientPhone').value,
+    patient_address: document.getElementById('patientAddress').value,
+    doctor_name:     document.getElementById('doctorName').value,
+    reminder:        document.getElementById('reminderChk').checked ? 1 : 0,
+    invoice_date:    document.getElementById('invoiceDate').value,
+    lab_charge:        parseFloat(document.getElementById('labCharge').value) || 0,
+    doctor_charge:     parseFloat(document.getElementById('doctorCharge').value) || 0,
+    injection_charge:  parseFloat(document.getElementById('injectionCharge').value) || 0,
+    nursing_charge:    parseFloat(document.getElementById('nursingCharge').value) || 0,
+    total_discount:    parseFloat(document.getElementById('sumDiscount').textContent) || 0,
+    product_subtotal:  parseFloat(document.getElementById('sumSubtotal').textContent) || 0,
+    additional_charges:parseFloat(document.getElementById('sumAdditional').textContent) || 0,
+    bulk_discount:     0,
+    rounding_off:      parseFloat(document.getElementById('sumRounding').textContent) || 0,
+    grand_total:       parseFloat(document.getElementById('sumGrand').textContent.replace('₹ ','')) || 0,
+    status,
+    items,
+  };
+
+  try {
+    const r = await fetch('api.php?action=save_sale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const d = await r.json();
+    if (d.success) {
+      setInvoiceDisplay(d.invoice_no);
+      pushNotif('Invoice ' + d.invoice_no + ' saved successfully!', 'ok');
+      if (status === 'saved') {
+        setTimeout(() => window.open('print_invoice.php?id=' + d.sale_id, '_blank'), 700);
+      } else {
+        setTimeout(() => window.location.href = 'sales_list.php', 1100);
+      }
+    } else {
+      pushNotif('Could not save: ' + d.message, 'err');
+    }
+  } catch(_) {
+    pushNotif('Server unreachable — running in demo mode.', 'info');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  NOTIFICATION STACK
+// ═══════════════════════════════════════════════════
+function pushNotif(msg, type = 'ok') {
+  const stack = document.getElementById('notifStack');
+  const el = document.createElement('div');
+  el.className = 'notif notif-' + type;
+
+  const icons = {
+    ok:   '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+    warn: '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',
+    err:  '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+    info: '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+  };
+
+  el.innerHTML = `
+    <span class="notif-icon">${icons[type] || icons.info}</span>
+    <span class="notif-msg">${msg}</span>
+    <button class="notif-close" onclick="this.parentElement.remove()">✕</button>
+  `;
+  stack.prepend(el);
+  requestAnimationFrame(() => el.classList.add('notif-in'));
+  setTimeout(() => { el.classList.remove('notif-in'); setTimeout(() => el.remove(), 400); }, 4000);
+}
+
+// ═══════════════════════════════════════════════════
+//  SAMPLE DATA
+// ═══════════════════════════════════════════════════
+function getSampleProducts() {
+  return [
+    { id:1, name:'Paracetamol 500mg', salt:'Paracetamol', batch_no:'BT2024A', expiry_date:'12/2027', rate:2.50, gst_percent:5, mrp:2.80, stock:500 },
+    { id:2, name:'Crocin 500mg', salt:'Paracetamol', batch_no:'CR2024B', expiry_date:'06/2027', rate:5.00, gst_percent:5, mrp:5.50, stock:300 },
+    { id:3, name:'Amoxicillin 250mg', salt:'Amoxicillin', batch_no:'AM2024C', expiry_date:'03/2027', rate:8.00, gst_percent:12, mrp:9.50, stock:200 },
+    { id:4, name:'Augmentin 625mg', salt:'Amoxicillin + Clavulanic Acid', batch_no:'AU2024D', expiry_date:'09/2027', rate:45.00, gst_percent:12, mrp:52.00, stock:150 },
+    { id:5, name:'Azithromycin 250mg', salt:'Azithromycin', batch_no:'AZ2024E', expiry_date:'12/2027', rate:18.00, gst_percent:12, mrp:20.00, stock:100 },
+    { id:6, name:'Metformin 500mg', salt:'Metformin Hydrochloride', batch_no:'MF2024F', expiry_date:'06/2028', rate:3.50, gst_percent:5, mrp:4.00, stock:400 },
+    { id:7, name:'Omeprazole 20mg', salt:'Omeprazole', batch_no:'OM2024J', expiry_date:'06/2027', rate:4.50, gst_percent:5, mrp:5.00, stock:350 },
+    { id:8, name:'Dolo 650mg', salt:'Paracetamol', batch_no:'DL2024P', expiry_date:'03/2028', rate:7.00, gst_percent:5, mrp:8.00, stock:350 },
+    { id:9, name:'Cetirizine 10mg', salt:'Cetirizine', batch_no:'CE2024L', expiry_date:'03/2028', rate:3.00, gst_percent:5, mrp:3.50, stock:600 },
+    { id:10, name:'Ibuprofen 400mg', salt:'Ibuprofen', batch_no:'IB2024N', expiry_date:'09/2027', rate:5.00, gst_percent:5, mrp:5.80, stock:400 },
+    { id:11, name:'Vitamin D3 60000IU', salt:'Cholecalciferol', batch_no:'VD2024Q', expiry_date:'06/2028', rate:35.00, gst_percent:12, mrp:40.00, stock:150 },
+    { id:12, name:'Atorvastatin 10mg', salt:'Atorvastatin', batch_no:'AT2024H', expiry_date:'12/2027', rate:12.00, gst_percent:12, mrp:14.00, stock:180 },
+    { id:13, name:'Amlodipine 5mg', salt:'Amlodipine Besylate', batch_no:'AM2024T', expiry_date:'03/2028', rate:7.50, gst_percent:12, mrp:8.50, stock:220 },
+    { id:14, name:'Pantoprazole 40mg', salt:'Pantoprazole', batch_no:'PA2024K', expiry_date:'12/2027', rate:6.00, gst_percent:5, mrp:6.80, stock:280 },
+    { id:15, name:'Calcium Carbonate 500mg', salt:'Calcium Carbonate', batch_no:'CC2024R', expiry_date:'12/2027', rate:4.00, gst_percent:5, mrp:4.50, stock:500 },
+  ];
+}
+</script>
+</body>
+</html>
