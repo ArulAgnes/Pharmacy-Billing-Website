@@ -1,7 +1,7 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00C9FF,100:92FE9D&height=200&section=header&text=Pharmacy%20Billing%20Website&fontSize=42&fontColor=ffffff&animation=fadeIn&fontAlignY=35" />
 
 <p align="center">
-  <img src="Images/git add ." width="100%" style="border-radius:20px;" alt="3D Pharmacy Banner" />
+  <img src="Images/banner_3d.png" width="100%" style="border-radius:20px;" alt="3D Pharmacy Banner" />
 </p>
 
 <div align="center">
