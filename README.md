@@ -1,4 +1,3 @@
-```md
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00C9FF,100:92FE9D&height=220&section=header&text=Pharmacy%20Billing%20Website&fontSize=42&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Smart%20POS%20for%20Medical%20Stores%20|%20PHP%20MySQL&descAlignY=55&descAlign=50" />
 
 <p align="center">
@@ -267,4 +266,3 @@ git push origin feature-AmazingFeature
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00C9FF,100:92FE9D&height=120&section=footer&text=Made%20with%20%E2%9D%A4%EF%B8%8F%20for%20Pharmacies&fontSize=20&fontColor=ffffff&animation=fadeIn" />
 
 </div>
-```
