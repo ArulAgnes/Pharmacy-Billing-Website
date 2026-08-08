@@ -3,16 +3,10 @@
 <p align="center">
   <img src="Images/banner_3d.png" width="100%" style="border-radius:20px;" alt="3D Pharmacy Banner" />
 </p>
-
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=24&pause=1000&center=true&vCenter=true&width=900&height=100&lines=%F0%9F%92%8A+Smart+Pharmacy+POS+System;%E2%9A%A1+Fast+Billing+%7C+Stock+Management;%F0%9F%93%8A+Built+with+PHP+%26+MySQL;%F0%9F%8E%A8+3D+UI+Inspired+Design" alt="Typing SVG" />
+</p>
 <div align="center">
-
-[![Typing SVG](https://readme-typing-text.demolab.com?font=Fira+Code&weight=700&size=24&pause=1000&center=true&vCenter=true&width=900&lines=💊+Smart+Pharmacy+POS+System;⚡+Fast+Billing+%7C+Stock+Management;📊+Built+with+PHP+%26+MySQL;🎨+3D+UI+Inspired+Design)](https://git.io/typing-svg)
-<p align="center">
-  <img src="https://readme-typing-text.demolab.com?font=Fira+Code&weight=700&size=24&pause=1000&center=true&vCenter=true&width=900&lines=Smart+Pharmacy+POS+System;Fast+Billing+and+Stock+Management;Built+with+PHP+and+MySQL;3D+UI+Inspired+Design" alt="Typing SVG" />
-</p>
-<p align="center">
-  <img src="https://readme-typing-text.demolab.com?font=Fira+Code&weight=700&size=24&pause=1000&center=true&vCenter=true&width=900&lines=%F0%9F%92%8A+Smart+Pharmacy+POS+System;%E2%9A%A1+Fast+Billing+%26+Stock+Management;%F0%9F%93%8A+Built+with+PHP+%26+MySQL;%F0%9F%8E%A8+3D+UI+Design" alt="Typing SVG" />
-</p>
 
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
