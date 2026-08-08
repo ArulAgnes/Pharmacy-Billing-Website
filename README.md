@@ -68,24 +68,24 @@ graph TD
 
 ---
 
-## 🎯 3D Feature Cards — Hover Me
+## 🎯 3D Feature Cards
 
 <div align="center">
 
 <table>
 <tr>
 <td align="center" width="33%">
-<img src="https://cdn3d.iconscout.com/3d/premium/thumb/billing-3d-icon-download-in-png-blend-fbx-gltf-file-formats--payment-invoice-finance-pack-business-icons-5182553.png" width="80" />
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Receipt.png" width="80" />
 <br><b>🧾 Smart Billing</b>
 <br><sub>Auto GST, Discount, Total<br>with instant calculation</sub>
 </td>
 <td align="center" width="33%">
-<img src="https://cdn3d.iconscout.com/3d/premium/thumb/medicine-3d-icon-download-in-png-blend-fbx-gltf-file-formats--medical-healthcare-pack-icons-5182570.png" width="80" />
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Pill.png" width="80" />
 <br><b>💊 Stock Management</b>
 <br><sub>Batch, Expiry, MRP, Quantity<br>Low-stock alerts</sub>
 </td>
 <td align="center" width="33%">
-<img src="https://cdn3d.iconscout.com/3d/premium/thumb/sales-report-3d-icon-download-in-png-blend-fbx-gltf-file-formats--analytics-business-pack-icons-5182556.png" width="80" />
+<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" width="80" />
 <br><b>📊 Sales Analytics</b>
 <br><sub>Full history, date filter,<br>profit tracking</sub>
 </td>
