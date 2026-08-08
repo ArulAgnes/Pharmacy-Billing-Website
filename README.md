@@ -78,10 +78,9 @@ Relational table connecting sales and products.
 | **Design** | Glassmorphism, 3D Isometric, FontAwesome |
 
 ---
-
+```bash
 ## ⚙️ Installation
 
-```bash
 # 1. Clone
 git clone https://github.com/ArulAgnes/Pharmacy-Billing-Website.git
 
@@ -116,12 +115,14 @@ Pharmacy-Billing-Website/
 │   └── db.php
 ├── index.php
 └── README.md
+```
 <div align="center">
 👨‍💻 Developed by Arul Agnes
 [GitHub](https://github.com/ArulAgnes)
 [Portfolio](https://github.com/ArulAgnes/MY-PORFOLIO-3D-ANIMATION)
 
 If you like this project, please give it a ⭐
-</div>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:00C9FF,100:92FE9D&height=100&section=footer&text=&fontSize=0" /> </div>
 
 
